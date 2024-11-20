@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro Timer</title>
-    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22red%22>🍅</text></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
         .timer-ring {
@@ -91,14 +91,13 @@
         progressRing: document.getElementById('progress-ring'),
         startBtn: document.getElementById('startBtn'),
         resetBtn: document.getElementById('resetBtn'),
-        
         modeDisplay: document.getElementById('mode-display'),
         statusDisplay: document.getElementById('status-display'),
         breakModal: document.getElementById('breakModal'),
         startBreakBtn: document.getElementById('startBreakBtn'),
         skipBreakBtn: document.getElementById('skipBreakBtn')
     };
-
+    const audio = new Audio('alarm.wav');
     // Timer State
     const state = {
         timeLeft: 0,
@@ -173,13 +172,15 @@
             showNotification("Work session complete! Time for a break!");
             elements.breakModal.classList.remove('hidden');
             elements.startBtn.textContent = 'Start';
+            audio.play();
         } else {
             showNotification("Break time complete! Ready to work?");
             state.isWorkTime = true;
             state.timeLeft = parseInt(elements.workTime.value) * 60;
             elements.modeDisplay.textContent = 'Work Time';
             elements.startBtn.textContent = 'Start';
-            updateDisplay();
+            audio.play();
+            
         }
     }
 
