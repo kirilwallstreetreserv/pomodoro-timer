@@ -8,6 +8,18 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22red%22>🍅</text></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
+        @font-face {
+            font-family: SF Display Bold;
+            src: url(SFPRODISPLAYBOLD.OTF);
+        }
+        @font-face {
+            font-family: SF Display Medium;
+            src: url(SFPRODISPLAYMEDIUM.OTF);
+        }
+        *{
+            font-family: SF Display Medium;
+            letter-spacing: 1px;
+        }
         .timer-ring {
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
