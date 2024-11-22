@@ -141,23 +141,43 @@
 
     // Timer Control Functions
     function startTimer() {
-        if (state.timerInterval) return;
-        
-        state.isActive = true;
-        elements.startBtn.textContent = 'Pause';
-        elements.statusDisplay.textContent = state.isWorkTime ? 'Working...' : 'Taking a break...';
+    if (state.timerInterval) return;
 
-        state.timerInterval = setInterval(() => {
-            state.timeLeft--;
-            updateDisplay();
+    const totalTime = state.isWorkTime
+        ? parseInt(elements.workTime.value) * 60
+        : parseInt(elements.breakTime.value) * 60;
 
-            if (state.timeLeft <= 0) {
-                clearInterval(state.timerInterval);
-                state.timerInterval = null;
-                handleTimerComplete();
-            }
-        }, 1000);
-    }
+    const endTime = Date.now() + state.timeLeft * 1000;
+
+    state.isActive = true;
+    elements.startBtn.textContent = 'Pause';
+    elements.statusDisplay.textContent = state.isWorkTime ? 'Working...' : 'Taking a break...';
+
+    state.timerInterval = setInterval(() => {
+        const now = Date.now();
+        state.timeLeft = Math.max(0, Math.floor((endTime - now) / 1000));
+        updateDisplay();
+
+        if (state.timeLeft <= 0) {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+            handleTimerComplete();
+        }
+    }, 250); // Check every 250ms for better precision
+}
+
+function resetTimer() {
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+    state.isActive = false;
+    state.isWorkTime = true;
+    state.timeLeft = parseInt(elements.workTime.value) * 60;
+
+    elements.startBtn.textContent = 'Start';
+    elements.modeDisplay.textContent = 'Work Time';
+    elements.statusDisplay.textContent = 'Ready to start';
+    updateDisplay();
+}
 
     function pauseTimer() {
         clearInterval(state.timerInterval);
@@ -167,18 +187,7 @@
         elements.statusDisplay.textContent = 'Paused';
     }
 
-    function resetTimer() {
-        clearInterval(state.timerInterval);
-        state.timerInterval = null;
-        state.isActive = false;
-        state.isWorkTime = true;
-        state.timeLeft = parseInt(elements.workTime.value) * 60;
-        elements.startBtn.textContent = 'Start';
-        elements.modeDisplay.textContent = 'Work Time';
-        elements.statusDisplay.textContent = 'Ready to start';
-        updateDisplay();
-    }
-
+  
     function handleTimerComplete() {
         if (state.isWorkTime) {
             showNotification("Work session complete! Time for a break!");
