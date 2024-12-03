@@ -149,26 +149,21 @@
 
     // Timer Control Functions
     function startTimer() {
-    if (state.timerInterval) return;
+        if (state.timerInterval) return;
+        
+        state.isActive = true;
+        elements.startBtn.textContent = 'Pause';
+        elements.statusDisplay.textContent = state.isWorkTime ? 'Working...' : 'Taking a break...';
+        updateEndTimeDisplay(state.timeLeft);
 
-    const totalTime = state.isWorkTime
-        ? parseInt(elements.workTime.value) * 60
-        : parseInt(elements.breakTime.value) * 60;
-
-    const endTime = Date.now() + state.timeLeft * 1000;
-
-    state.isActive = true;
-    elements.startBtn.textContent = 'Pause';
-    elements.statusDisplay.textContent = state.isWorkTime ? 'Working...' : 'Taking a break...';
-
-    state.timerInterval = setInterval(() => {
-        const now = Date.now();
-        state.timeLeft = Math.max(0, Math.floor((endTime - now) / 1000));
-        updateDisplay();
+        state.timerInterval = setInterval(() => {
+            state.timeLeft--;
+            updateDisplay();
 
             if (state.timeLeft <= 0) {
                 clearInterval(state.timerInterval);
                 state.timerInterval = null;
+                elements.endTimeDisplay.textContent = '';
                 handleTimerComplete();
             }
         }, 1000);
@@ -192,6 +187,7 @@
         elements.startBtn.textContent = 'Start';
         elements.modeDisplay.textContent = 'Work Time';
         elements.statusDisplay.textContent = 'Ready to start';
+        elements.endTimeDisplay.textContent = '';
         updateDisplay();
     }
 
