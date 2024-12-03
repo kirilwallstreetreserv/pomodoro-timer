@@ -2,6 +2,7 @@
 
 <html lang="en">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro Timer</title>
@@ -32,6 +33,7 @@
         <div class="text-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800" id="mode-display">Work Time</h1>
             <p class="text-sm text-gray-500 mt-1" id="status-display">Ready to start</p>
+            <p class="text-xs text-gray-400 mt-1" id="end-time-display"></p>
         </div>
 
 <div class="grid grid-cols-2 gap-4 mb-6">
@@ -105,6 +107,7 @@
         resetBtn: document.getElementById('resetBtn'),
         modeDisplay: document.getElementById('mode-display'),
         statusDisplay: document.getElementById('status-display'),
+        endTimeDisplay: document.getElementById('end-time-display'),
         breakModal: document.getElementById('breakModal'),
         startBreakBtn: document.getElementById('startBreakBtn'),
         skipBreakBtn: document.getElementById('skipBreakBtn')
@@ -133,6 +136,11 @@
         elements.progressRing.style.stroke = state.isWorkTime ? '#ef4444' : '#22c55e';
     }
 
+    function updateEndTimeDisplay(seconds) {
+        const endTime = new Date(Date.now() + seconds * 1000);
+        elements.endTimeDisplay.textContent = `Ends at ${endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+    }
+
     function showNotification(message) {
         if (state.notificationsEnabled && Notification.permission === "granted") {
             new Notification("Pomodoro Timer", { body: message });
@@ -146,6 +154,7 @@
         state.isActive = true;
         elements.startBtn.textContent = 'Pause';
         elements.statusDisplay.textContent = state.isWorkTime ? 'Working...' : 'Taking a break...';
+        updateEndTimeDisplay(state.timeLeft);
 
         state.timerInterval = setInterval(() => {
             state.timeLeft--;
@@ -154,6 +163,7 @@
             if (state.timeLeft <= 0) {
                 clearInterval(state.timerInterval);
                 state.timerInterval = null;
+                elements.endTimeDisplay.textContent = '';
                 handleTimerComplete();
             }
         }, 1000);
@@ -165,6 +175,7 @@
         state.isActive = false;
         elements.startBtn.textContent = 'Resume';
         elements.statusDisplay.textContent = 'Paused';
+        elements.endTimeDisplay.textContent = '';
     }
 
     function resetTimer() {
@@ -176,6 +187,7 @@
         elements.startBtn.textContent = 'Start';
         elements.modeDisplay.textContent = 'Work Time';
         elements.statusDisplay.textContent = 'Ready to start';
+        elements.endTimeDisplay.textContent = '';
         updateDisplay();
     }
 
@@ -192,7 +204,6 @@
             elements.modeDisplay.textContent = 'Work Time';
             elements.startBtn.textContent = 'Start';
             audio.play();
-            
         }
     }
 
@@ -214,8 +225,6 @@
     });
 
     elements.resetBtn.addEventListener('click', resetTimer);
-
-   
 
     elements.startBreakBtn.addEventListener('click', () => {
         elements.breakModal.classList.add('hidden');
@@ -243,10 +252,9 @@
         e.target.value = Math.max(1, Math.min(30, parseInt(e.target.value) || 5));
     });
 
- 
     // Initialize
     resetTimer();
 </script>
 
 </body>
-</html> 
+</html>
